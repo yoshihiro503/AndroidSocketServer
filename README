@@ -1,0 +1,6 @@
+REQUIREMENT
+===========
+
+        * JDK6 (http://java.sun.com/javase/ja/6/download.html)
+        * sbt-0.11.0 (https://github.com/harrah/xsbt/wiki)
+        * android-plugin (https://github.com/jberkel/android-plugin)
