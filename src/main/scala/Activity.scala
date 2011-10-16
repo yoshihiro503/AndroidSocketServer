@@ -27,10 +27,10 @@ class MainActivity extends Activity {
     actor (loop(f())) start
   }
 
-  def getLines[T](in : java.io.InputStream) : Stream[String] = {
+  def getLines(in : java.io.InputStream) : Iterator[String] = {
     import java.io._
     val reader = new BufferedReader(new InputStreamReader(in))
-    Stream.continually(reader.readLine()).takeWhile(_ != null)
+    Iterator.continually(reader.readLine()).takeWhile(_ != null)
   }
 
   def server() = {
