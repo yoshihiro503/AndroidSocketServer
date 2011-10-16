@@ -4,6 +4,8 @@ import android.app.Activity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.LinearLayout
+import android.widget.Button
+import android.view.View
 import android.util.Log
 import java.io.PrintWriter
 import scala.io.Source
@@ -15,8 +17,20 @@ class MainActivity extends Activity {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
-    setContentView(new TextView(this) {
-      setText("address = ["+getAddress.mkString(",")+"], port = "+port)
+    val self = this
+    setContentView(new LinearLayout(self) {
+      setOrientation(LinearLayout.VERTICAL)
+      addView(new TextView(self) {
+        setText("address = ["+getAddress.mkString(",")+"], port = "+port)
+      })
+      addView(new Button(self) {
+        setText("EXIT")
+        setOnClickListener(new View.OnClickListener() {
+          override def onClick(v : View) = {
+            System.exit(Activity.RESULT_OK)
+          }
+        })
+      })
     })
 
     forever(server)
