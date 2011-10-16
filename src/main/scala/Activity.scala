@@ -35,25 +35,32 @@ class MainActivity extends Activity {
 
   def server() = {
     import java.net.ServerSocket
-
-    val server = new ServerSocket(port) {
-      setSoTimeout(0)
-    }
-    val socket = server.accept()
-    val in  = socket.getInputStream()
-    val out = new PrintWriter(socket.getOutputStream())
-    try {
-      Interpreter.lineInterpreter(getLines(in)).foreach {
-      	res =>
-	  out.println(res)
-	  out.flush()
+    import java.net.Socket
+    import java.io._
+    def using[T](op : (InputStream,OutputStream) => T) : T = {
+      val server = new ServerSocket(port) {
+        setSoTimeout(0)
       }
-    } catch {
-      case e => e.printStackTrace()
+      val socket = server.accept()
+      val in =  socket.getInputStream()
+      val out = socket.getOutputStream()
+      def close() = { server.close(); in.close(); out.close() }
+      try {
+        val y = op(in, out)
+        close(); y
+      } catch {
+        case (e: Exception) => { close(); throw e }
+      }
     }
-    server.close
-    in.close()
-    out.close()
+    using {
+      case(in, out) =>
+        val writer = new PrintWriter(out)
+        Interpreter.lineInterpreter(getLines(in)).foreach {
+      	  res =>
+	    writer.println(res)
+	    writer.flush()
+        }
+    }
   }
 
   def getAddress() : Iterator[java.net.InetAddress] = {
